@@ -1,0 +1,90 @@
+## Initrd for WD MyCloudMirror gen2 und Ex2 Ultra
+This custom initrd is for booting debian, ubuntu or other Linux Distibution
+on WD MCMg2 or Ex2U
+
+## Support
++ USB or SATA drive 
++ ext2,3,4, btrfs
++ raid 0,1 and LVM
++ LUKS-encrypted drive
++ ssh-rescue shell
+
+## Usage 
+#Update Kernel if you have access to shell
+wget http://fox-exe.ru/WDMyCloud/WDMyCloud-Ex2-Ultra/Dev/Linux-4.15.0-rc6/uImage
+dd if=/dev/zero of=/dev/mtdblock1
+dd if=uImage of=/dev/mtdblock1
+
+#Update ramdisk if you have access to shell
+dd if=/dev/zero of=/dev/mtdblock2
+dd if=uInitrd-wd385 of=/dev/mtdblock2
+
+#If you don't have access to shell use USB UART connector (press "1" to stop autoboot):
+#Connect FT232RL USB UART Converter
+#   NAS         UART
+#   o - Tx      Rx
+#   o - GND     GND
+#   o - 3.3v    -
+#   - -         -
+#   o - Rx      Tx
+usb start
+fatload usb 0:1 0xa00000 /uimage
+fatload usb 0:1 0xf00000 /uramdisk (uInitrd-wd385)
+bootm 0xa00000 0xf00000
+
+
+#Reboot
+reboot -f
+
+#Part your new HDDs
+fdisk /dev/sda
+#(d) for delete any existing partitions
+#(n) for creating new partititions
+#We need to create one single partition with the size of whole disk.
+#Same with /dev/sdb
+
+#Create Raid1
+mdadm --create /dev/md0 --level=1 --raid-devices=2 --run /dev/sda1 /dev/sdb1
+
+#Encrypt your new partition and open it
+cryptsetup luksFormat /dev/md0
+cryptsetup open /dev/md0 cryptlvm
+
+#Create LVM logical volumes on encrypted partition
+lvm pvcreate /dev/mapper/cryptlvm
+lvm vgcreate MyVolGroup /dev/mapper/cryptlvm
+lvm lvcreate -L 512MB MyVolGroup -n swap -Zn
+lvm lvcreate -L 4096MB MyVolGroup -n root -Zn
+lvm lvcreate -l 100%FREE MyVolGroup -n data -Zn
+
+#Format and label your partitions
+mkswap /dev/MyVolGroup/swap
+swapon /dev/MyVolGroup/swap
+mkfs.ext4 /dev/MyVolGroup/root
+mkfs.ext4 /dev/MyVolGroup/data
+
+#Then we install Debian Stretch kindly provided by Fox-exe.ru repository
+mkdir /mnt/root
+mount /dev/MyVolGroup/root /mnt/root
+cd /mnt/root
+wget http://fox-exe.ru/WDMyCloud/WDMyCloud-Ex2-Ultra/Debian-linux_4.14.4/debian-stretch-rootfs.tar.xz
+tar xvf debian-stretch-rootfs.tar.xz
+rm debian-stretch-rootfs.tar.xz
+
+#Update libs for new kernel
+wget https://fox-exe.ru/WDMyCloud/WDMyCloud-Ex2-Ultra/Dev/Linux-4.15.0-rc6/libs-4.15.0-rc6.tar.gz
+tar xvf libs-4.15.0-rc6.tar.gz
+
+#Then we reboot
+cd /
+umount /mnt/root
+sync
+reboot -f
+
+With encryption passphrase or keyfile could be used. If keyfile unlock is used keyfile 
+"key.luks" has to be stored either on partion labeld "key" (usb or hdd). If passphrase 
+is used, a ssh-shell on port 2222 and user: root is 
+open and partiton can be unlocked with "cryptsetup -T 5 luksOpen $device cryptroot".
+
+If rootfs is not found or something else went wrong a ssh-shell is open on port 2222 with user root.
+
