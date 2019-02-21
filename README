@@ -1,6 +1,5 @@
 ## Initrd for WD MyCloud Ex2 Ultra
-This custom initrd is for booting debian, ubuntu or other Linux Distibution
-on WD MCMg2 or Ex2U
+This custom uInitrd and uImage for isntalling Debian Stretch and use full disk encryption on WD MyCloud Ex2 Ultra NAS
 
 ## Support
 + USB or SATA drive 
