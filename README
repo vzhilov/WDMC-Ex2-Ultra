@@ -9,68 +9,78 @@ on WD MCMg2 or Ex2U
 + LUKS-encrypted drive
 + ssh-rescue shell
 
-#Make any changes of Ram Disk in initrd folder and recompile it with compile_ramdisk.sh to get new uInitrd (Ram Disk file)
+# Make any changes of Ram Disk in initrd folder and recompile it with compile_ramdisk.sh to get new uInitrd (Ram Disk file)
 
 ## Usage 
-#Update Kernel if you have access to shell
+# Update Kernel if you have access to shell
 wget https://raw.githubusercontent.com/vzhilov/WDMC-Ex2-Ultra/master/uImage
 dd if=/dev/zero of=/dev/mtdblock1
 dd if=uImage of=/dev/mtdblock1
 
-#Update ramdisk if you have access to shell
+# Update ramdisk if you have access to shell
 wget https://raw.githubusercontent.com/vzhilov/WDMC-Ex2-Ultra/master/uInitrd
 dd if=/dev/zero of=/dev/mtdblock2
 dd if=uInitrd of=/dev/mtdblock2
 
-#If you don't have access to shell use USB UART connector (press "1" to stop autoboot):
-#Connect FT232RL USB UART Converter
+# If you don't have access to shell use USB UART connector (press "1" to stop autoboot):
+# Connect FT232RL USB UART Converter
 #   NAS         UART
 #   o - Tx      Rx
 #   o - GND     GND
 #   o - 3.3v    -
 #   - -         -
 #   o - Rx      Tx
+#
+# Use Putty for connection via COM port 
+# (take port number in Device Manager after installing UART driver, possibly from https://fox-exe.ru/Files/USB-UART/)
+# Serial line to connect: COM5
+# SPEED: 115200
+# Data bits: 8
+# Stop bits: 1
+# Parity: None
+# Flow control: XON/XOFF
+
 usb start
 fatload usb 0:1 0xa00000 uImage
 fatload usb 0:1 0xf00000 uInitrd
 bootm 0xa00000 0xf00000
 
 
-#Reboot
+# Reboot
 reboot -f
 
-#Part your new HDDs
+# Part your new HDDs
 fdisk /dev/sda
-#(d) for delete any existing partitions
-#(n) for creating new partititions
-#We need to create one single partition with the size of whole disk.
-#Same with /dev/sdb
+# (d) for delete any existing partitions
+# (n) for creating new partititions
+# We need to create one single partition with the size of whole disk.
+# Same with /dev/sdb
 
-#Create Raid1
+# Create Raid1
 mdadm --create /dev/md0 --level=1 --raid-devices=2 --run /dev/sda1 /dev/sdb1
 
-#Alternative, if second HDD will be added later
+# Alternative, if second HDD will be added later
 mdadm --create /dev/md0 --level=1 --raid-devices=2 --run /dev/sda1 missing
 mdadm --manage /dev/md0 --add /dev/sdb1
 
-#Encrypt your new partition and open it
+# Encrypt your new partition and open it
 cryptsetup luksFormat /dev/md0
 cryptsetup open /dev/md0 cryptlvm
 
-#Create LVM logical volumes on encrypted partition
+# Create LVM logical volumes on encrypted partition
 lvm pvcreate /dev/mapper/cryptlvm
 lvm vgcreate MyVolGroup /dev/mapper/cryptlvm
 lvm lvcreate -L 512MB MyVolGroup -n swap -Zn
 lvm lvcreate -L 4096MB MyVolGroup -n root -Zn
 lvm lvcreate -l 100%FREE MyVolGroup -n data -Zn
 
-#Format and label your partitions
+# Format and label your partitions
 mkswap /dev/MyVolGroup/swap
 swapon /dev/MyVolGroup/swap
 mkfs.ext4 /dev/MyVolGroup/root
 mkfs.ext4 /dev/MyVolGroup/data
 
-#Then we install Debian Stretch kindly provided by Fox-exe.ru repository
+# Then we install Debian Stretch kindly provided by Fox-exe.ru repository
 mkdir /mnt/root
 mount /dev/MyVolGroup/root /mnt/root
 cd /mnt/root
@@ -78,11 +88,11 @@ wget https://raw.githubusercontent.com/vzhilov/WDMC-Ex2-Ultra/master/debian-stre
 tar xvf debian-stretch-rootfs.tar.xz
 rm debian-stretch-rootfs.tar.xz
 
-#Update libs for new kernel
+# Update libs for new kernel
 wget https://raw.githubusercontent.com/vzhilov/WDMC-Ex2-Ultra/master/libs-4.15.0-rc6.tar.gz
 tar xvf libs-4.15.0-rc6.tar.gz
 
-#Then we reboot
+# Then we reboot
 cd /
 umount /mnt/root
 sync
