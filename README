@@ -24,12 +24,12 @@ dd if=uInitrd of=/dev/mtdblock2
 
 # If you don't have access to shell use USB UART connector (press "1" to stop autoboot):
 # Connect FT232RL USB UART Converter
-#   NAS         UART
-#   o - Tx      Rx
-#   o - GND     GND
-#   o - 3.3v    -
-#   - -         -
-#   o - Rx      Tx
+#      NAS     UART
+#  o - Tx      Rx
+#  o - GND     GND
+#  o - 3.3v    -
+#  -   -       -
+#  o - Rx      Tx
 #
 # Use Putty for connection via COM port 
 # (take port number in Device Manager after installing UART driver, possibly from https://fox-exe.ru/Files/USB-UART/)
