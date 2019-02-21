@@ -101,3 +101,4 @@ The system will boot only if a keyfile "key.luks" is presend on connected USB de
 then connect to the system by ssh on port 2222 with a user root and open partition with the command:
 "cryptsetup -T 5 luksOpen $device cryptroot".
 
+
