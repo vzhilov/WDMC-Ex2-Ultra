@@ -1,0 +1,3 @@
+#!/bin/sh
+[ "$IFACE" != "lo" ] || exit 0
+udhcpc -t 5 -q -s /etc/dhcp.script
