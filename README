@@ -9,6 +9,8 @@ on WD MCMg2 or Ex2U
 + LUKS-encrypted drive
 + ssh-rescue shell
 
+#Make any changes of Ram Disk in initrd folder and recompile it with compile_ramdisk.sh to get new uInitrd (Ram Disk file)
+
 ## Usage 
 #Update Kernel if you have access to shell
 wget https://raw.githubusercontent.com/vzhilov/WDMC-Ex2-Ultra/master/uImage
