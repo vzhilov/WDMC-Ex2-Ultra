@@ -12,7 +12,7 @@ This custom uInitrd and uImage for isntalling Debian Stretch and use full disk e
 
 ## Usage 
 # Update Kernel if you have access to shell
-wget https://raw.githubusercontent.com/vzhilov/WDMC-Ex2-Ultra/master/uImage
+wget https://raw.githubusercontent.com/vzhilov/WDMC-Ex2-Ultra/master/uImage (--no-check-certificate in case of error?)
 dd if=/dev/zero of=/dev/mtdblock1
 dd if=uImage of=/dev/mtdblock1
 
