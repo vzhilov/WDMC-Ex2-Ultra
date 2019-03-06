@@ -4,21 +4,6 @@
 # (c) Carl Schiller; schreibcarl@gmail.com
 
 #-----------functions--------------
-# init gpio
-resetbutton_init() {
-echo 50 > /sys/class/gpio/export
-echo 1 > /sys/class/gpio/gpio50/active_low
-}
-
-#copy customconfig from nand
-setconfig() {
-  cp /mnt/config/initrd/shadow /etc/					  #rootpasswd
-  if ! [ -e /mnt/config/initrd/authorized_keys ]; then  
-      touch /mnt/config/initrd/authorized_keys
-  fi
-  ln -s /mnt/config/initrd/authorized_keys /etc/dropbear/authorized_keys
-}
-
 # Start decryption filesystem
 decrypt_shell() {
   # Check which device encrypted
@@ -31,15 +16,12 @@ decrypt_shell() {
   if [  -e /mnt/key/key.luks  ]; then
     cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/key/key.luks
     check_unlock
-    # Look for key on nand
-  elif [ -e /mnt/config/initrd/key.luks ]; then
-    cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/config/initrd/key.luks || rescue_shell
-    check_unlock
   else
     startnetwork
     dropbear -B -p 2222 -b /etc/dropbear/banner.crypto -P /run/dropbear.pid 2>&1 >/dev/null
   fi
 }
+
 # Check if key-decrypt was sucessfull
 check_unlock(){
 wait    
@@ -70,21 +52,6 @@ echo -e "\n Something went wrong. Dropping to a shell.\n"
   exec setsid cttyhack /bin/ash
 }
 
-#ask for stop boot process
-ask_for_stop() {
-i=5
-echo -n " Press any key or reset key to stop and run shell..."
-while [ $i -ge 1 ]; do
-   read -s -n1 -t1 key
-   if [ `cat /sys/class/gpio/gpio50/value` = 1 ] || ! [ -z $key  ]; then
-   rescue_shell
-   fi
-   echo -n $i".."
-   let i=$i-1
-done
-echo -e "\n"
-}
-
 #LVM init sequence
 initlvm() {
   lvm vgscan --mknodes # creates /dev/mapper/control
@@ -96,21 +63,19 @@ initlvm() {
 #Switchroot seqence
 boot() {
   echo -e "\n Unmounting and Switch to OS\n"
-  # Copy MAC
   wait
-  cp /mnt/config/mac_addr /mnt/root/etc
   # kill running daemons
-  kill -9 $(cat /run/dropbear.pid) 2>&1 >/dev/null
-  kill -9 $(cat /run/udhcpc.pid) 2>&1 >/dev/null
-  umount /mnt/config
-  umount /proc
-  umount /sys
-  umount /dev
-  exec switch_root /mnt/root /sbin/init
+  [ -r "/run/dropbear.pid" ] && kill -9 $(cat /run/dropbear.pid)
+  [ -r "/run/udhcpc.pid" ]   && kill -9 $(cat /run/udhcpc.pid)
+  umount /mnt/config 2> /dev/null
+  umount /sys 2> /dev/null
+  umount /proc 2> /dev/null
+  umount /dev/pts 2> /dev/null
+  umount /dev 2> /dev/null
+  exec switch_root -c /dev/console /mnt/root /sbin/init
 }
 
 #-----------init script--------------
-
 # Creat folders and install Busybox
 /bin/busybox mkdir -p /dev /mnt/root /mnt/key /mnt/config /mnt/config/initrd /proc /root /usr/sbin /usr/bin /sbin /bin /sys /run
 /bin/busybox --install -s
@@ -137,36 +102,17 @@ mdadm --assemble --scan
 ubiattach /dev/ubi_ctrl -m 5
 wait
 mount -t ubifs ubi0:config /mnt/config
-setconfig
-
-# Init LVM
-initlvm
-
-# Mount the root filesystem.
-resetbutton_init
-ask_for_stop
-mount -o rw $(findfs LABEL=rootfs) /mnt/root 2>&1 >/dev/null
-
-
-# Clean up and boot
-if [ -h /mnt/root/sbin/init -o -e /mnt/root/sbin/init ]; then
-  boot
-fi
 
 #check for LUKS-devices
-if
-  blkid | grep -q crypto
-then
-  decrypt_shell
-  echo -e "\n Waiting for device decryption"
-  # wait until the device exists and is decrypted
-  while ! [ -e /dev/mapper/cryptroot ]; do
-    sleep 2
-  done
-fi
+decrypt_shell
+echo -e "\n Waiting for device decryption"
+# wait until the device exists and is decrypted
+while ! [ -e /dev/mapper/cryptroot ]; do
+  sleep 2
+done
 
 initlvm
-mount -o rw $(findfs LABEL=rootfs) /mnt/root 2>&1 >/dev/null
+mount -o rw /dev/MyVolGroup/root /mnt/root 2>&1 >/dev/null
 if [ -h /mnt/root/sbin/init -o -e /mnt/root/sbin/init ]; then
   boot
 else
