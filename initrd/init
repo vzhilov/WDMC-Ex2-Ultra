@@ -1,126 +1,60 @@
-#!/bin/busybox ash
-# init-script for WD Mycloud Mirror gen2 & Ex2 ultra
-# Boots from partition labeled "rootfs"
-# (c) Carl Schiller; schreibcarl@gmail.com
-
-#-----------functions--------------
-# init gpio
-resetbutton_init() {
-echo 50 > /sys/class/gpio/export
-echo 1 > /sys/class/gpio/gpio50/active_low
-}
-
-#copy customconfig from nand
-setconfig() {
-  cp /mnt/config/initrd/shadow /etc/					  #rootpasswd
-  if ! [ -e /mnt/config/initrd/authorized_keys ]; then  
-      touch /mnt/config/initrd/authorized_keys
-  fi
-  ln -s /mnt/config/initrd/authorized_keys /etc/dropbear/authorized_keys
-}
-
-# Start decryption filesystem
-decrypt_shell() {
-  # Check which device encrypted
-  export cryptdev=$(blkid -l -o device -t TYPE=crypto_LUKS)
-  echo device=$(blkid -l -o device -t TYPE=crypto_LUKS) >>/etc/profile      # add location of crytodevice to environment
-  echo export device >>/etc/profile
-  # Look for key on usb / hdd
-  mount -o rw $(findfs LABEL=key) /mnt/key
-  wait
-  if [  -e /mnt/key/key.luks  ]; then
-    cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/key/key.luks
-    check_unlock
-    # Look for key on nand
-  elif [ -e /mnt/config/initrd/key.luks ]; then
-    cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/config/initrd/key.luks || rescue_shell
-    check_unlock
-  else
-    startnetwork
-    dropbear -B -p 2222 -b /etc/dropbear/banner.crypto -P /run/dropbear.pid 2>&1 >/dev/null
-  fi
-}
-# Check if key-decrypt was sucessfull
-check_unlock(){
-wait    
-if ! [ -e /dev/mapper/cryptroot ]; then
-    echo -e "Unlock check failed,..."
-    rescue_shell
-fi
-}
-
-# setting up network
-startnetwork() {
-  /sbin/getmac
-  ifconfig eth0 up
-  udhcpc -t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
-}
-
-# rescue_shell
-rescue_shell() {
-# start ssh
-startnetwork
-dropbear -B -p 2222 -b /etc/dropbear/banner.rescue -P /run/dropbear.pid 2>&1 >/dev/null
-echo -e "\n Something went wrong. Dropping to a shell.\n"
-
-  # Run UART shell
-  exec 0</dev/console
-  exec 1>/dev/console
-  exec 2>/dev/console
-  exec setsid cttyhack /bin/ash
-}
-
-#ask for stop boot process
-ask_for_stop() {
-i=5
-echo -n " Press any key or reset key to stop and run shell..."
-while [ $i -ge 1 ]; do
-   read -s -n1 -t1 key
-   if [ `cat /sys/class/gpio/gpio50/value` = 1 ] || ! [ -z $key  ]; then
-   rescue_shell
-   fi
-   echo -n $i".."
-   let i=$i-1
-done
-echo -e "\n"
-}
-
-#LVM init sequence
-initlvm() {
-  lvm vgscan --mknodes # creates /dev/mapper/control
-  lvm vgchange -a ly
-  lvm vgscan --mknodes # creates /dev/mapper/VG-root and /dev/VG/root
-  wait
-}
-
-#Switchroot seqence
-boot() {
-  echo -e "\n Unmounting and Switch to OS\n"
-  # Copy MAC
-  wait
-  cp /mnt/config/mac_addr /mnt/root/etc
-  # kill running daemons
-  kill -9 $(cat /run/dropbear.pid) 2>&1 >/dev/null
-  kill -9 $(cat /run/udhcpc.pid) 2>&1 >/dev/null
-  umount /mnt/config
-  umount /proc
-  umount /sys
-  umount /dev
-  exec switch_root /mnt/root /sbin/init
-}
-
-#-----------init script--------------
-
-# Creat folders and install Busybox
-/bin/busybox mkdir -p /dev /mnt/root /mnt/key /mnt/config /mnt/config/initrd /proc /root /usr/sbin /usr/bin /sbin /bin /sys /run
-/bin/busybox --install -s
+#!/bin/sh
+# Author: Fox_exe
+# Skype: Fox_experience
 
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
-# Mount the /proc and /sys filesystems.
-mount -t proc none /proc
-mount -t sysfs none /sys
-mount -t devtmpfs none /dev
+echo "# Loading, please wait..."
+
+# ========= FUNC =========
+start_ssh() {
+	echo "# Starting a network..."
+	load_mac.sh
+	ifup -a
+	udhcpc -t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
+	dropbear -B -p 2222 -b /etc/dropbear/banner.txt -P /run/dropbear.pid 2>&1 >/dev/null
+}
+
+
+run_shell() {
+	echo "# Runing a shell..."
+
+	# Run UART shell
+	exec 0</dev/console
+	exec 1>/dev/console
+	exec 2>/dev/console
+	exec setsid cttyhack ash
+}
+
+ask_for_stop() {
+	i=3
+	echo -n " Press any key or reset key to stop and run shell..."
+	while [ $i -ge 1 ]; do
+		read -s -n1 -t1 ANYKEY
+		if [ `cat /sys/class/gpio/gpio50/value` = 1 ] || ! [ -z $ANYKEY ]; then
+			start_ssh
+			run_shell
+		fi
+		echo -n $i".."
+		let i=$i-1
+	done
+	echo -e "\n"
+}
+
+# ========= CODE =========
+
+echo "# Mounting filesystems..."
+# hide error messages, if kernel already mount /dev
+mount -t devtmpfs -o size=10M,mode=0755 udev /dev > /dev/null 2>&1
+mkdir -p /dev/pts
+mount -t devpts -o noexec,nosuid,gid=5,mode=0620 devpts /dev/pts > /dev/null 2>&1
+mount -t sysfs -o nodev,noexec,nosuid sysfs /sys
+mount -t tmpfs -o "nosuid,size=20%,mode=0755" tmpfs /run
+mount -t proc -o nodev,noexec,nosuid proc /proc
+
+# Reset button init for WDMC Mirror Gen2 / Ex2 Ultra
+echo 50 > /sys/class/gpio/export
+echo 1 > /sys/class/gpio/gpio50/active_low
 
 # Adding mdev support
 echo /sbin/mdev >/proc/sys/kernel/hotplug
@@ -130,45 +64,64 @@ mdev -s
 echo 'DEVICE /dev/sd??*' >/etc/mdadm.conf
 mdadm -Eb /dev/sd??* >>/etc/mdadm.conf
 mdadm -As --force
-wait # disk not ready?
+wait
 mdadm --assemble --scan
 
-# Mount the config files
-ubiattach /dev/ubi_ctrl -m 5
-wait
-mount -t ubifs ubi0:config /mnt/config
-setconfig
-
 # Init LVM
-initlvm
+lvm vgscan --mknodes
+lvm vgchange -a ly
+lvm vgscan --mknodes
+wait
 
-# Mount the root filesystem.
-resetbutton_init
 ask_for_stop
-mount -o rw $(findfs LABEL=rootfs) /mnt/root 2>&1 >/dev/null
-
-
-# Clean up and boot
-if [ -h /mnt/root/sbin/init -o -e /mnt/root/sbin/init ]; then
-  boot
-fi
 
 #check for LUKS-devices
 if
-  blkid | grep -q crypto
+	blkid | grep -q crypto
 then
-  decrypt_shell
-  echo -e "\n Waiting for device decryption"
-  # wait until the device exists and is decrypted
-  while ! [ -e /dev/mapper/cryptroot ]; do
-    sleep 2
-  done
+	# Look for key on usb / hdd
+	mkdir -p /mnt/usb
+	mount -o rw $(findfs LABEL=key) /mnt/usb
+	wait
+	if [ -e /mnt/usb/key.luks ]; then
+		cp /mnt/usb/key.luks /decrypt_key
+		umount /mnt/usb
+		/sbin/decrypt.sh
+		#if $?; then
+		#	echo "Decrypt failed."
+		#	run_shell
+		#fi
+	fi
+
+	echo -e "\n Waiting for device decryption"
+
+	# wait until the device exists and is decrypted
+	while ! [ -e /dev/mapper/rootfs ]; do
+		sleep 1
+	done
 fi
 
-initlvm
+# If not encrypted
 mount -o rw $(findfs LABEL=rootfs) /mnt/root 2>&1 >/dev/null
+[ $? -ne 0 ] && mount -o rw $(findfs TYPE=ext3) /mnt/root 2>&1 >/dev/null
+[ $? -ne 0 ] && mount -o rw $(findfs TYPE=ext4) /mnt/root 2>&1 >/dev/null
+[ $? -ne 0 ] && echo "# Something wrong - Rootfs not found!"
+
 if [ -h /mnt/root/sbin/init -o -e /mnt/root/sbin/init ]; then
-  boot
-else
-  rescue_shell
+	echo "Switching to normal OS..."
+	wait
+	cp /sbin/load_mac.sh /mnt/root/sbin/load_mac.sh
+
+	# Kill daemons if still running
+	[ -r "/run/dropbear.pid" ] && kill -9 $(cat /run/dropbear.pid)
+	[ -r "/run/udhcpc.pid" ]   && kill -9 $(cat /run/udhcpc.pid)
+
+	umount /sys 2> /dev/null
+	umount /proc 2> /dev/null
+	umount /dev/pts 2> /dev/null
+	umount /dev 2> /dev/null
+	exec switch_root -c /dev/console $ROOTFS /sbin/init || run_shell
 fi
+
+# Actually this wont run normally...
+run_shell
