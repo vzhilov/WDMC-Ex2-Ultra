@@ -1,0 +1,10 @@
+#######################################################
+#                                                     #
+# For login use:                                      #
+# User: root                                          #
+# Pass: mycloud                                       #
+#                                                     #
+# For decrypt fs and continue boot, type "decrypt.sh" #
+# and enter decryption password                       #
+#                                                     #
+#######################################################
