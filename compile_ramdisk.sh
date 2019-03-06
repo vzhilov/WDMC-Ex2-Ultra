@@ -10,3 +10,4 @@ mkimage -A arm -O linux -T ramdisk -C lzma -a 0x00000000 -e 0x00000000 -n Initrd
 rm -f initramfs.cpio.lzma
 
 echo "# Done!"
+
