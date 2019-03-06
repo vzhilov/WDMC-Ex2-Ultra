@@ -1,0 +1,77 @@
+#!/bin/busybox ash
+# boot-script for WD Mycloud Mirror gen2 & Ex2 ultra
+# Boots from partition labeled "rootfs"
+# (c) Carl Schiller; schreibcarl@gmail.com
+
+#save rootpassword / config
+saveconfig() {
+if [ ! -e /mnt/config/initrd/shadow ]; then
+  cp /etc/shadow /mnt/config/initrd/
+ elif [ /etc/shadow -nt /mnt/config/initrd/shadow ]; then
+    cp /etc/shadow /mnt/config/initrd/
+fi
+}
+
+#LVM init sequence
+initlvm() {
+  lvm vgscan --mknodes # creates /dev/mapper/control
+  lvm vgchange -a ly
+  lvm vgscan --mknodes # creates /dev/mapper/VG-root and /dev/VG/root
+  wait
+}
+
+decrypt_fs() {
+  # Check which device encrypted
+  export cryptdev=$(blkid -l -o device -t TYPE=crypto_LUKS)
+  echo device=$(blkid -l -o device -t TYPE=crypto_LUKS) >>/etc/profile      # add location of crytodevice to environment
+  echo export device >>/etc/profile
+  # Look for key on usb / hdd
+  mount -o rw $(findfs LABEL=key) /mnt/key
+  wait
+  if [  -e /mnt/key/key.luks  ]; then
+    cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/key/key.luks   
+  # Look for key on nand
+  elif [ -e /mnt/config/initrd/key.luks ]; then
+    cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/config/initrd/key.luks
+  else
+  cryptsetup -T 5 luksOpen $device cryptroot
+  wait
+  fi
+}
+
+#Switchroot seqence
+boot() {
+  echo -e "\n Unmounting and Switch to OS"
+  # Copy MAC
+  wait
+  cp /mnt/config/mac_addr /mnt/root/etc
+  # kill running daemons
+  kill -9 $(cat /run/dropbear.pid)
+  kill -9 $(cat /run/udhcpc.pid)
+  saveconfig
+  umount /mnt/config
+  umount /proc
+  umount /sys
+  umount /dev
+  wait
+  exec switch_root /mnt/root /sbin/init
+}
+
+# Clean up and boot
+if [ -h /mnt/root/sbin/init ]; then
+  boot
+fi
+#check for LUKS-devices
+if
+  blkid | grep -q crypto; then
+  decrypt_fs
+fi
+initlvm
+mount -o rw $(findfs LABEL=rootfs) /mnt/root
+if [ -h /mnt/root/sbin/init ]; then
+  boot
+else
+  echo -e "Opps, boot failed"
+fi
+
+

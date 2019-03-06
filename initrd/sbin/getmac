@@ -1,0 +1,10 @@
+#!/bin/sh
+
+#read mac from file to var
+
+read hwaddr < /mnt/config/mac_addr
+
+#set MAC to eth0 
+
+echo "MAC set to "$hwaddr
+ifconfig eth0 hw ether $hwaddr
