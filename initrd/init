@@ -97,11 +97,12 @@ mdadm --assemble --scan
 # Mount the config files
 #ubiattach /dev/ubi_ctrl -m 5
 #wait
-#mount -t ubifs ubi0:config /mnt/config
+#mount -t ubifs ubi0:config /mnt/config - todo, we can't mount ubifs device as a module is missing
 
 # setting up network
-/sbin/getmac
-ifconfig eth0 up
+#/sbin/getmac
+ifconfig eth0 hw ether c2:0d:88:00:80:08
+#ifconfig eth0 up
 udhcpc -t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
 
 #check for LUKS-devices
