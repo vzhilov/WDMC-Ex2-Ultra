@@ -20,7 +20,6 @@ decrypt_shell() {
     cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/key/key.luks
     check_unlock
   else
-    startnetwork
     dropbear -B -p 2222 -b /etc/dropbear/banner.crypto -P /run/dropbear.pid 2>&1 >/dev/null
   fi
 }
@@ -32,13 +31,6 @@ if ! [ -e /dev/mapper/cryptroot ]; then
     echo -e "Unlock check failed,..."
     rescue_shell
 fi
-}
-
-# setting up network
-startnetwork() {
-  /sbin/getmac
-  ifconfig eth0 up
-  udhcpc -t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
 }
 
 # rescue_shell
@@ -105,6 +97,11 @@ mdadm --assemble --scan
 ubiattach /dev/ubi_ctrl -m 5
 wait
 mount -t ubifs ubi0:config /mnt/config
+
+# setting up network
+/sbin/getmac
+ifconfig eth0 up
+udhcpc -t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
 
 #check for LUKS-devices
 decrypt_shell
