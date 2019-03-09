@@ -18,6 +18,7 @@ decrypt_shell() {
   wait
   if [  -e /mnt/key/key.luks  ]; then
     cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/key/key.luks
+    rm /mnt/key/key.luks
     check_unlock
   else
     dropbear -B -p 2222 -b /etc/dropbear/banner.crypto -P /run/dropbear.pid 2>&1 >/dev/null
