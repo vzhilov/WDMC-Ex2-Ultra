@@ -95,9 +95,9 @@ wait # disk not ready?
 mdadm --assemble --scan
 
 # Mount the config files
-ubiattach /dev/ubi_ctrl -m 5
-wait
-mount -t ubifs ubi0:config /mnt/config
+#ubiattach /dev/ubi_ctrl -m 5
+#wait
+#mount -t ubifs ubi0:config /mnt/config
 
 # setting up network
 /sbin/getmac
