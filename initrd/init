@@ -37,7 +37,6 @@ fi
 # rescue_shell
 rescue_shell() {
 # start ssh
-startnetwork
 dropbear -B -p 2222 -b /etc/dropbear/banner.rescue -P /run/dropbear.pid 2>&1 >/dev/null
 echo -e "\n Something went wrong. Dropping to a shell.\n"
 
