@@ -107,11 +107,12 @@ udhcpc -t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
 
 #check for LUKS-devices
 decrypt_shell
-echo -e "\n Waiting for device decryption"
+#echo -e "\n Waiting for device decryption"
 # wait until the device exists and is decrypted
-while ! [ -e /dev/mapper/cryptroot ]; do
-  sleep 2
-done
+#while ! [ -e /dev/mapper/cryptroot ]; do
+#  sleep 2
+#done
+
 
 initlvm
 mount -o rw /dev/MyVolGroup/root /mnt/root 2>&1 >/dev/null
