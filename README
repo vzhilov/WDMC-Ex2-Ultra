@@ -73,6 +73,9 @@ lvm lvcreate -L 512MB MyVolGroup -n swap -Zn
 lvm lvcreate -L 4096MB MyVolGroup -n root -Zn
 lvm lvcreate -l 100%FREE MyVolGroup -n data -Zn
 
+#Scan for created volumes
+lvm vgscan --mknodes
+
 # Format and label your partitions
 mkswap /dev/MyVolGroup/swap
 swapon /dev/MyVolGroup/swap
