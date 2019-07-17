@@ -70,6 +70,12 @@ boot() {
   exec switch_root -c /dev/console /mnt/root /sbin/init
 }
 
+#Reset button
+resetbutton_init() {
+echo 50 > /sys/class/gpio/export
+echo 1 > /sys/class/gpio/gpio50/active_low
+}
+
 #-----------init script--------------
 # Creat folders and install Busybox
 /bin/busybox mkdir -p /dev /mnt/root /mnt/key /mnt/config /mnt/config/initrd /proc /root /usr/sbin /usr/bin /sbin /bin /sys /run
@@ -85,6 +91,8 @@ mount -t devtmpfs none /dev
 # Adding mdev support
 echo /sbin/mdev >/proc/sys/kernel/hotplug
 mdev -s
+
+resetbutton_init
 
 # Initial Raid
 echo 'DEVICE /dev/sd??*' >/etc/mdadm.conf
