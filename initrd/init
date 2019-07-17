@@ -13,8 +13,8 @@ decrypt_shell() {
   # Look for key on usb / hdd
   mount -o rw $(findfs LABEL=key) /mnt/key
   wait
-  fttpServerIp=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}')
-  tftp -r key.luks -l /mnt/key/key.luks -g "${fttpServerIp}195"
+  # fttpServerIp=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}')
+  tftp -r key.luks -l /mnt/key/key.luks -g tftp.local #"${fttpServerIp}195" - no, handle it with DNS
   wait
   if [  -e /mnt/key/key.luks  ]; then
     cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/key/key.luks
