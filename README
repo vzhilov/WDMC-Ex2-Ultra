@@ -49,18 +49,17 @@ bootm 0xa00000 0xf00000
 reboot -f
 
 # Part your new HDDs
-fdisk /dev/sda
+# fdisk /dev/sda
 # (d) for delete any existing partitions
 # (n) for creating new partititions
-# We need to create one single partition with the size of whole disk.
-# Same with /dev/sdb
+# We need to delete all partitions
 
 # Create Raid1
-mdadm --create /dev/md0 --level=1 --raid-devices=2 --run /dev/sda1 /dev/sdb1
+mdadm --create /dev/md0 --level=1 --raid-devices=2 --run /dev/sda /dev/sdb
 
 # Alternative, if second HDD will be added later
-mdadm --create /dev/md0 --level=1 --raid-devices=2 --run /dev/sda1 missing
-mdadm --manage /dev/md0 --add /dev/sdb1
+mdadm --create /dev/md0 --level=1 --raid-devices=2 --run /dev/sda missing
+mdadm --manage /dev/md0 --add /dev/sdb
 
 # Encrypt your new partition and open it
 cryptsetup -v --type luks --cipher aes-xts-plain64 --key-size 512 --hash sha512 --iter-time 2000 --use-random --verify-passphrase luksFormat /dev/md0
