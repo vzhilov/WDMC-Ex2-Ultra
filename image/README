@@ -9,14 +9,13 @@ apt install crossbuild-essential-armhf
 git clone --depth 1 git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-stable
 
 # Скачиваем конфиг ядра
-wget http://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/kernel.config -o linux-stable/.config
+cp kernel.config linux-stable/.config
 
 # WD MyCloud Ex2 Ultra
-wgethttp://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/armada-385-wdmc-Ex2-Ultra.dts -o linux-stable/arch/arm/boot/dts/
+cp armada-385-wdmc-Ex2-Ultra.dts linux-stable/arch/arm/boot/dts/
 
 # Пора начинать...
 # Примечание: Если сборка ведется непосредственно на устройстве, то пропускаем строки с установкой переменных ARCH и CROSS_COMPILE
-# Примечание: Замените $DTS_FILE на имя конфига (dts) для вашего устройства
 # Примечание: $DIR_RESULT - Путь, куда будет сохранен результат (Ядро и модули)
 # Примечание: Опция "-j 4" указывает на то, сколько ядер процессора будут задействованны в сборке. Уберите для авто-выбора или замените на своё значение.
 export ARCH=arm
