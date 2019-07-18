@@ -11,13 +11,6 @@ git clone --depth 1 git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-s
 # Скачиваем конфиг ядра
 wget http://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/kernel.config -o linux-stable/.config
 
-# Скачиваем DTS файл под ваше устройство (Или все разом):
-# WD MyCloud Mirror Gen1
-wget http://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/armada-370-wdmc-mirror-gen1.dts -o linux-stable/arch/arm/boot/dts/
-# WD MyCloud Mirror Gen2
-wget http://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/armada-385-wdmc-mirror-gen2.dts -o linux-stable/arch/arm/boot/dts/
-# WD MyCloud Gen2 (One disk, FW v2.xx)
-wgethttp://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/armada-375-wdmc-gen2.dts -o linux-stable/arch/arm/boot/dts/
 # WD MyCloud Ex2 Ultra
 wgethttp://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/armada-385-wdmc-Ex2-Ultra.dts -o linux-stable/arch/arm/boot/dts/
 
