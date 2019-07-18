@@ -1,1 +1,51 @@
-test
+# Get all needed packages:
+apt update
+apt upgrade
+apt install build-essential u-boot-tools libncurses5-dev git bison flex bc libssl-dev
+# Примечание: Если сборка ведется на обычном компе - устанавливаем Cross-compiler, если на девайсе - пропускаем слудующую команду.
+apt install crossbuild-essential-armhf
+
+# Скачиваем исходники последней стабильной ветки ядра Linux:
+git clone --depth 1 git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-stable
+
+# Скачиваем конфиг ядра
+wget http://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/kernel.config -o linux-stable/.config
+
+# Скачиваем DTS файл под ваше устройство (Или все разом):
+# WD MyCloud Mirror Gen1
+wget http://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/armada-370-wdmc-mirror-gen1.dts -o linux-stable/arch/arm/boot/dts/
+# WD MyCloud Mirror Gen2
+wget http://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/armada-385-wdmc-mirror-gen2.dts -o linux-stable/arch/arm/boot/dts/
+# WD MyCloud Gen2 (One disk, FW v2.xx)
+wgethttp://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/armada-375-wdmc-gen2.dts -o linux-stable/arch/arm/boot/dts/
+# WD MyCloud Ex2 Ultra
+wgethttp://fox-exe.ru/WDMyCloud/Other/Official_linux_kernel/armada-385-wdmc-Ex2-Ultra.dts -o linux-stable/arch/arm/boot/dts/
+
+# Пора начинать...
+# Примечание: Если сборка ведется непосредственно на устройстве, то пропускаем строки с установкой переменных ARCH и CROSS_COMPILE
+# Примечание: Замените $DTS_FILE на имя конфига (dts) для вашего устройства
+# Примечание: $DIR_RESULT - Путь, куда будет сохранен результат (Ядро и модули)
+# Примечание: Опция "-j 4" указывает на то, сколько ядер процессора будут задействованны в сборке. Уберите для авто-выбора или замените на своё значение.
+export ARCH=arm
+export CROSS_COMPILE=arm-linux-gnueabihf-
+export DIR_RESULT=../output
+export DTS_FILE=armada-385-wdmc-Ex2-Ultra
+mkdir -p $DIR_RESULT
+cd linux-stable
+
+# Обновляем конфиг (Если появились новые параметры - будет предложено ввести их значения)
+make -j 4 oldconfig
+
+# Если нужно, можно внести изменения в конфиг ядра через псевдографическое меню:
+make -j 4 menuconfig
+
+# Собственно, собираем все:
+make -j 4 zImage
+make -j 4 $DTS_FILE.dtb
+make -j 4 modules
+make -j 4 INSTALL_MOD_PATH=$DIR_RESULT modules_install
+cat arch/arm/boot/zImage arch/arm/boot/dts/$DTS_FILE.dtb > zImage_and_dtb
+mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n $DTS_FILE -d zImage_and_dtb $DIR_RESULT/uImage
+rm zImage_and_dtb
+
+# Готово! Результат будет в папке $DIR_RESULT ("output" по умолчанию)
