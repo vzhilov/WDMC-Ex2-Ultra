@@ -75,9 +75,6 @@ kernel/crypto/algif_hash.ko: kernel/crypto/af_alg.ko
 kernel/crypto/algif_skcipher.ko: kernel/crypto/af_alg.ko
 kernel/crypto/algif_rng.ko: kernel/crypto/af_alg.ko
 kernel/crypto/algif_aead.ko: kernel/crypto/af_alg.ko
-kernel/drivers/video/backlight/lcd.ko:
-kernel/drivers/video/backlight/backlight.ko:
-kernel/drivers/video/backlight/generic_bl.ko: kernel/drivers/video/backlight/backlight.ko
 kernel/drivers/char/hw_random/rng-core.ko:
 kernel/drivers/block/nbd.ko:
 kernel/drivers/block/cryptoloop.ko:

@@ -78,7 +78,6 @@ alias symbol:snd_timer_start snd_timer
 alias symbol:af_alg_make_sg af_alg
 alias symbol:snd_soc_cnew snd_soc_core
 alias symbol:dm_tm_dec dm_persistent_data
-alias symbol:of_find_backlight backlight
 alias symbol:snd_soc_unregister_component snd_soc_core
 alias symbol:dm_disk_bitset_init dm_persistent_data
 alias symbol:af_alg_free_resources af_alg
@@ -174,7 +173,6 @@ alias symbol:snd_pcm_new snd_pcm
 alias symbol:dm_tm_shadow_block dm_persistent_data
 alias symbol:snd_card_set_id snd
 alias symbol:nf_nat_icmpv6_reply_translation nf_nat
-alias symbol:backlight_device_get_by_type backlight
 alias symbol:nf_send_reset6 nf_reject_ipv6
 alias symbol:usbnet_get_ethernet_addr usbnet
 alias symbol:dm_cell_error dm_bio_prison
@@ -292,7 +290,6 @@ alias symbol:snd_timer_resolution snd_timer
 alias symbol:cfg80211_gtk_rekey_notify cfg80211
 alias symbol:snd_soc_component_nc_pin snd_soc_core
 alias symbol:register_ip_vs_scheduler ip_vs
-alias symbol:backlight_device_register backlight
 alias symbol:usbnet_open usbnet
 alias symbol:dm_get_cell dm_bio_prison
 alias symbol:nf_log_dump_sk_uid_gid nf_log_common
@@ -331,7 +328,6 @@ alias symbol:__ieee80211_get_tx_led_name mac80211
 alias symbol:dm_tm_open_with_sm dm_persistent_data
 alias symbol:ath_hw_keyreset ath
 alias symbol:ipt_alloc_initial_table ip_tables
-alias symbol:backlight_unregister_notifier backlight
 alias symbol:dm_bufio_client_create dm_bufio
 alias symbol:btintel_set_event_mask btintel
 alias symbol:snd_pcm_suspend_all snd_pcm
@@ -449,7 +445,6 @@ alias symbol:snd_ctl_notify snd
 alias symbol:ieee80211_ctstoself_get mac80211
 alias symbol:iscsi_get_port_speed_name scsi_transport_iscsi
 alias symbol:cfg80211_bss_iter cfg80211
-alias symbol:backlight_device_unregister backlight
 alias symbol:snd_pcm_set_sync snd_pcm
 alias symbol:cfg80211_iter_combinations cfg80211
 alias symbol:snd_component_add snd
@@ -489,7 +484,6 @@ alias symbol:ieee80211_tdls_oper_request mac80211
 alias symbol:snd_soc_dapm_get_enum_double snd_soc_core
 alias symbol:dm_sm_disk_create dm_persistent_data
 alias symbol:usbnet_status_stop usbnet
-alias symbol:backlight_register_notifier backlight
 alias symbol:tun_xdp_to_ptr tun
 alias symbol:dm_bitset_test_bit dm_persistent_data
 alias symbol:iscsi_create_iface scsi_transport_iscsi
@@ -508,7 +502,6 @@ alias symbol:LZ4_compress_HC_continue lz4hc_compress
 alias symbol:snd_soc_resume snd_soc_core
 alias symbol:dm_bufio_new dm_bufio
 alias symbol:iscsi_flashnode_bus_match scsi_transport_iscsi
-alias symbol:lcd_device_register lcd
 alias symbol:cfg80211_connect_done cfg80211
 alias symbol:snd_soc_calc_bclk snd_soc_core
 alias symbol:snd_soc_component_set_sysclk snd_soc_core
@@ -520,7 +513,6 @@ alias symbol:mwifiex_handle_rx_packet mwifiex
 alias symbol:snd_soc_params_to_bclk snd_soc_core
 alias symbol:af_alg_alloc_areq af_alg
 alias symbol:snd_info_get_line snd
-alias symbol:backlight_force_update backlight
 alias symbol:devm_hwrng_unregister rng_core
 alias symbol:ieee80211_get_tkip_p1k_iv mac80211
 alias symbol:snd_soc_get_volsw_range snd_soc_core
@@ -547,7 +539,6 @@ alias symbol:snd_soc_of_parse_tdm_slot snd_soc_core
 alias symbol:ip_vs_proto_data_get ip_vs
 alias symbol:usbnet_unlink_rx_urbs usbnet
 alias symbol:btintel_read_boot_params btintel
-alias symbol:devm_of_find_backlight backlight
 alias symbol:dm_bufio_set_sector_offset dm_bufio
 alias symbol:snd_pcm_open_substream snd_pcm
 alias symbol:btmrvl_interrupt btmrvl
@@ -598,7 +589,6 @@ alias symbol:dm_bitset_new dm_persistent_data
 alias symbol:dm_btree_del dm_persistent_data
 alias symbol:usb_serial_handle_sysrq_char usbserial
 alias symbol:nf_conncount_count nf_conncount
-alias symbol:devm_backlight_device_unregister backlight
 alias symbol:cdrom_check_events cdrom
 alias symbol:snd_device_free snd
 alias symbol:ieee80211_get_tkip_p2k mac80211
@@ -729,7 +719,6 @@ alias symbol:dm_array_del dm_persistent_data
 alias symbol:iscsi_destroy_conn scsi_transport_iscsi
 alias symbol:dm_bufio_mark_buffer_dirty dm_bufio
 alias symbol:ieee80211_report_wowlan_wakeup mac80211
-alias symbol:backlight_device_set_brightness backlight
 alias symbol:ieee80211_mandatory_rates cfg80211
 alias symbol:snd_unregister_device snd
 alias symbol:iscsi_remove_session scsi_transport_iscsi
@@ -896,7 +885,6 @@ alias symbol:dm_bufio_write_dirty_buffers_async dm_bufio
 alias symbol:snd_pcm_rate_to_rate_bit snd_pcm
 alias symbol:snd_pcm_lib_free_vmalloc_buffer snd_pcm
 alias symbol:cdc_ncm_rx_verify_nth16 cdc_ncm
-alias symbol:lcd_device_unregister lcd
 alias symbol:btintel_version_info btintel
 alias symbol:cfg80211_probe_status cfg80211
 alias symbol:dm_bm_write_lock dm_persistent_data
@@ -1032,7 +1020,6 @@ alias symbol:snd_rawmidi_input_params snd_rawmidi
 alias symbol:fuse_dev_alloc fuse
 alias symbol:snd_soc_component_exit_regmap snd_soc_core
 alias symbol:tap_create_cdev tap
-alias symbol:devm_lcd_device_register lcd
 alias symbol:cfg80211_vendor_cmd_reply cfg80211
 alias symbol:af_alg_unregister_type af_alg
 alias symbol:snd_timer_open snd_timer
@@ -1097,7 +1084,6 @@ alias symbol:ip_vs_scheduler_err ip_vs
 alias symbol:snd_info_free_entry snd
 alias symbol:usbnet_nway_reset usbnet
 alias symbol:bch_btree_insert_key bcache
-alias symbol:devm_lcd_device_unregister lcd
 alias symbol:ath_hw_get_listen_time ath
 alias symbol:iscsi_unblock_session scsi_transport_iscsi
 alias symbol:usbnet_skb_return usbnet
@@ -1128,11 +1114,9 @@ alias symbol:dm_btree_lookup dm_persistent_data
 alias symbol:nf_reject_ip6_tcphdr_get nf_reject_ipv6
 alias symbol:xt_rateest_lookup xt_RATEEST
 alias symbol:dm_bufio_get_block_number dm_bufio
-alias symbol:devm_backlight_device_register backlight
 alias symbol:iscsi_destroy_iface scsi_transport_iscsi
 alias symbol:snd_pcm_stream_unlock_irq snd_pcm
 alias symbol:dm_exception_store_type_register dm_snapshot
-alias symbol:of_find_backlight_by_node backlight
 alias symbol:cdc_ncm_rx_verify_ndp16 cdc_ncm
 alias symbol:ieee80211_queue_work mac80211
 alias symbol:ip_set_name_byindex ip_set

@@ -188,8 +188,6 @@ kernel/drivers/net/phy/marvell.ko
 kernel/drivers/net/phy/microchip.ko
 kernel/drivers/net/usb/lan78xx.ko
 kernel/drivers/of/of_mdio.ko
-kernel/drivers/phy/marvell/phy-mvebu-a3700-comphy.ko
-kernel/drivers/phy/marvell/phy-mvebu-a3700-utmi.ko
 kernel/drivers/pps/pps_core.ko
 kernel/drivers/ptp/ptp.ko
 kernel/drivers/regulator/fixed.ko
