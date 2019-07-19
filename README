@@ -64,6 +64,8 @@ mdadm --manage /dev/md0 --add /dev/sdb
 # Encrypt your new partition and open it
 cryptsetup -v --type luks --cipher aes-xts-plain64 --key-size 512 --hash sha512 --iter-time 2000 --use-random --verify-passphrase luksFormat /dev/md0
 cryptsetup open /dev/md0 cryptlvm
+mkfs.ext4 /dev/mapper/cryplvm
+pv dd if=/dev/urandom of=/dev/mapper/cryplvm
 
 # Create LVM logical volumes on encrypted partition
 lvm pvcreate /dev/mapper/cryptlvm
