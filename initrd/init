@@ -45,6 +45,11 @@ echo -e "\n Something went wrong. Dropping to a shell.\n"
   exec 1>/dev/console
   exec 2>/dev/console
   exec setsid cttyhack /bin/ash
+  
+  while ! [ -e /dev/mapper/cryptroot ]; do
+    sleep 2
+  done
+  boot
 }
 
 #LVM init sequence
@@ -119,8 +124,4 @@ if [ -h /mnt/root/sbin/init -o -e /mnt/root/sbin/init ]; then
   boot
 else
   rescue_shell
-  while ! [ -e /dev/mapper/cryptroot ]; do
-    sleep 2
-  done
-  boot
 fi
