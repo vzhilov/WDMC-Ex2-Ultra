@@ -97,6 +97,9 @@ mount -t devtmpfs none /dev
 echo /sbin/mdev >/proc/sys/kernel/hotplug
 mdev -s
 
+# Adding reset button beheavor
+resetbutton_init
+
 # Initial Raid
 echo 'DEVICE /dev/sd?*' >/etc/mdadm.conf
 mdadm -Eb /dev/sd?* >>/etc/mdadm.conf
