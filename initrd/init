@@ -11,14 +11,14 @@ decrypt_shell() {
   echo device=$(blkid -l -o device -t TYPE=crypto_LUKS) >>/etc/profile      # add location of crytodevice to environment
   echo export device >>/etc/profile
   # Look for key on usb / hdd
-  mount -o rw $(findfs LABEL=key) /mnt/key
-  wait
+  #mount -o rw $(findfs LABEL=key) /mnt/key
+  #wait
   # fttpServerIp=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}')
-  tftp -r key.luks -l /mnt/key/key.luks -g tftp.local #"${fttpServerIp}195" - no, handle it with DNS
+  tftp -r license.key -l /mnt/key/license.key -g tftp.local
   wait
-  if [  -e /mnt/key/key.luks  ]; then
-    cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/key/key.luks
-    rm /mnt/key/key.luks
+  if [  -e /mnt/key/license.key  ]; then
+    cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/key/license.key
+    rm /mnt/key/license.key
     check_unlock
   else
     dropbear -B -p 2222 -b /etc/dropbear/banner.crypto -P /run/dropbear.pid 2>&1 >/dev/null
@@ -92,11 +92,9 @@ mount -t devtmpfs none /dev
 echo /sbin/mdev >/proc/sys/kernel/hotplug
 mdev -s
 
-resetbutton_init
-
 # Initial Raid
-echo 'DEVICE /dev/sd??*' >/etc/mdadm.conf
-mdadm -Eb /dev/sd??* >>/etc/mdadm.conf
+echo 'DEVICE /dev/sd?*' >/etc/mdadm.conf
+mdadm -Eb /dev/sd?* >>/etc/mdadm.conf
 mdadm -As --force
 wait # disk not ready?
 mdadm --assemble --scan
@@ -114,12 +112,6 @@ udhcpc -t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
 
 #check for LUKS-devices
 decrypt_shell
-#echo -e "\n Waiting for device decryption"
-# wait until the device exists and is decrypted
-#while ! [ -e /dev/mapper/cryptroot ]; do
-#  sleep 2
-#done
-
 
 initlvm
 mount -o rw /dev/MyVolGroup/root /mnt/root 2>&1 >/dev/null
