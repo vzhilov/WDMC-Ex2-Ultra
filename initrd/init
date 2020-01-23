@@ -14,7 +14,7 @@ decrypt_shell() {
   #mount -o rw $(findfs LABEL=key) /mnt/key
   #wait
   # fttpServerIp=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}')
-  tftp -r license.key -l /mnt/key/license.key -g tftp.local
+  tftp -r license.key -l /mnt/key/license.key -g 192.168.1.38 #tftp.local
   wait
   if [  -e /mnt/key/license.key  ]; then
     cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/key/license.key
@@ -48,7 +48,9 @@ echo -e "\n Something went wrong. Dropping to a shell.\n"
   
   while ! [ -e /dev/mapper/cryptroot ]; do
     sleep 2
+    echo "Waiting for root"
   done
+  echo "Root is avaliable"
   boot
 }
 
@@ -83,7 +85,7 @@ echo 1 > /sys/class/gpio/gpio50/active_low
 
 #-----------init script--------------
 # Creat folders and install Busybox
-/bin/busybox mkdir -p /dev /mnt/root /mnt/key /mnt/config /mnt/config/initrd /proc /root /usr/sbin /usr/bin /sbin /bin /sys /run
+/bin/busybox mkdir -p /dev /mnt/root /mnt/data /mnt/key /mnt/config /mnt/config/initrd /proc /root /usr/sbin /usr/bin /sbin /bin /sys /run
 /bin/busybox --install -s
 
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -123,6 +125,7 @@ decrypt_shell
 
 initlvm
 mount -o rw /dev/MyVolGroup/root /mnt/root 2>&1 >/dev/null
+mount -o rw /dev/MyVolGroup/data /mnt/data 2>&1 >/dev/null
 if [ -h /mnt/root/sbin/init -o -e /mnt/root/sbin/init ]; then
   boot
 else
