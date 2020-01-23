@@ -112,9 +112,6 @@ then connect to the system by ssh on port 2222 with a user root and open partiti
 Run apt upgrade to upgrade to newest Debian
 
 In the root file system put
-
 swapon /dev/mapper/MyVolGroup-swap
 mount /dev/mapper/MyVolGroup-data /mnt/data
-
 in rc.local, not in /etc/fstab
-
