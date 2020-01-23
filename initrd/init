@@ -36,22 +36,23 @@ fi
 
 # rescue_shell
 rescue_shell() {
-# start ssh
-dropbear -B -p 2222 -b /etc/dropbear/banner.rescue -P /run/dropbear.pid 2>&1 >/dev/null
-echo -e "\n Something went wrong. Dropping to a shell.\n"
-
+  # start ssh
+  dropbear -B -p 2222 -b /etc/dropbear/banner.rescue -P /run/dropbear.pid 2>&1 >/dev/null
+  echo -e "\n Something went wrong. Dropping to a shell.\n"
+ 
+  ## Wait for manual decryption
+  # while ! [ -e /dev/mapper/cryptroot ]; do
+  #    sleep 2
+  #  done
+  #  boot
+  ## Or
+    
   # Run UART shell
   exec 0</dev/console
   exec 1>/dev/console
   exec 2>/dev/console
   exec setsid cttyhack /bin/ash
   
-  while ! [ -e /dev/mapper/cryptroot ]; do
-    sleep 2
-    echo "Waiting for root"
-  done
-  echo "Root is avaliable"
-  boot
 }
 
 #LVM init sequence
@@ -85,7 +86,7 @@ echo 1 > /sys/class/gpio/gpio50/active_low
 
 #-----------init script--------------
 # Creat folders and install Busybox
-/bin/busybox mkdir -p /dev /mnt/root /mnt/data /mnt/key /mnt/config /mnt/config/initrd /proc /root /usr/sbin /usr/bin /sbin /bin /sys /run
+/bin/busybox mkdir -p /dev /mnt/root /mnt/key /mnt/config /mnt/config/initrd /proc /root /usr/sbin /usr/bin /sbin /bin /sys /run
 /bin/busybox --install -s
 
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -125,7 +126,6 @@ decrypt_shell
 
 initlvm
 mount -o rw /dev/MyVolGroup/root /mnt/root 2>&1 >/dev/null
-mount -o rw /dev/MyVolGroup/data /mnt/data 2>&1 >/dev/null
 if [ -h /mnt/root/sbin/init -o -e /mnt/root/sbin/init ]; then
   boot
 else

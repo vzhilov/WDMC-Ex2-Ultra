@@ -64,7 +64,8 @@ mdadm --manage /dev/md0 --add /dev/sdb
 # Encrypt your new partition and open it
 cryptsetup -v --type luks --cipher aes-xts-plain64 --key-size 512 --hash sha512 --iter-time 2000 --use-random --verify-passphrase luksFormat /dev/md0
 cryptsetup open /dev/md0 cryptlvm
-dd if=/dev/urandom of=/dev/mapper/cryplvm status=progress
+dd if=/dev/urandom of=/dev/mapper/cryplvm status=progress 
+#That's going to be few days, run this from ssh console and check progress from another console with 'ps ax | grep dd' to find out $pid and then kill -USR1 $pid
 
 # Create LVM logical volumes on encrypted partition
 lvm pvcreate /dev/mapper/cryptlvm
@@ -108,4 +109,12 @@ The system will boot only if a keyfile "key.luks" is presend on connected USB de
 then connect to the system by ssh on port 2222 with a user root and open partition with the command:
 "cryptsetup -T 5 luksOpen $device cryptroot".
 
+Run apt upgrade to upgrade to newest Debian
+
+In the root file system put
+
+swapon /dev/mapper/MyVolGroup-swap
+mount /dev/mapper/MyVolGroup-data /mnt/data
+
+in rc.local, not in /etc/fstab
 
