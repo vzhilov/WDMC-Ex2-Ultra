@@ -14,13 +14,12 @@ decrypt_shell() {
   #mount -o rw $(findfs LABEL=key) /mnt/key
   #wait
   # fttpServerIp=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}')
-  tftp -r license.key -l /mnt/key/license.key -g 192.168.1.38 #tftp.local
+  tftp -r license.key -l /mnt/key/license.key -g tftp.local
   wait
   if [  -e /mnt/key/license.key  ]; then
     cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/key/license.key
     dd if=/dev/urandom of=/mnt/key/license.key bs=1024 count=$RANDOM
-    sleep 10
-    tftp -r license.key -l /mnt/key/license.key -p 192.168.1.38 #tftp.local
+    tftp -r license.key -l /mnt/key/license.key -p tftp.local
     rm /mnt/key/license.key
     check_unlock
   else
