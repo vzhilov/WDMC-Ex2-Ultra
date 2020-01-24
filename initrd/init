@@ -19,6 +19,7 @@ decrypt_shell() {
   if [  -e /mnt/key/license.key  ]; then
     cryptsetup luksOpen $cryptdev cryptroot --key-file /mnt/key/license.key
     dd if=/dev/urandom of=/mnt/key/license.key bs=1024 count=$RANDOM
+    sleep 10
     tftp -r license.key -l /mnt/key/license.key -p 192.168.1.38 #tftp.local
     rm /mnt/key/license.key
     check_unlock
