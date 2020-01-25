@@ -72,7 +72,7 @@ lvm pvcreate /dev/mapper/cryptlvm
 lvm vgcreate MyVolGroup /dev/mapper/cryptlvm
 lvm lvcreate -L 512MB MyVolGroup -n swap -Zn
 lvm lvcreate -L 4096MB MyVolGroup -n root -Zn
-lvm lvcreate -l 100%FREE MyVolGroup -n data -Zn
+lvm lvcreate -l +100%FREE MyVolGroup -n data -Zn
 
 #Scan for created volumes
 lvm vgscan --mknodes
