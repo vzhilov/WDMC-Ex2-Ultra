@@ -111,6 +111,8 @@ mdadm -Eb /dev/sd?* >>/etc/mdadm.conf
 mdadm -As --force
 wait # disk not ready?
 mdadm --assemble --scan
+# If case a disk was replaced (TODO: make an IF here)
+mdadm --manage /dev/md0 --add /dev/sdb
 
 # Mount the config files
 #ubiattach /dev/ubi_ctrl -m 5
