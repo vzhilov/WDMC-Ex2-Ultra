@@ -115,3 +115,6 @@ In the root file system put
 swapon /dev/mapper/MyVolGroup-swap
 mount /dev/mapper/MyVolGroup-data /mnt/data
 in rc.local, not in /etc/fstab
+
+Couldn't make reset button to power off, so used cron with eth0 down instead:
+0-59 * * * * /bin/ip a | /bin/grep -Eq ': eth0:.*state UP' || /sbin/poweroff
