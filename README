@@ -96,6 +96,7 @@ rm debian-stretch-rootfs.tar.xz
 # Update libs for new kernel
 wget https://raw.githubusercontent.com/vzhilov/WDMC-Ex2-Ultra/master/libs-4.15.0-rc6.tar.gz
 tar xvf libs-4.15.0-rc6.tar.gz
+rm libs-4.15.0-rc6.tar.gz
 
 # Then we reboot
 cd /
