@@ -122,9 +122,8 @@ mdadm --manage /dev/md0 --add /dev/sdb
 # setting up network
 #/sbin/getmac
 ifconfig eth0 hw ether c2:0d:88:00:80:08
-ifconfig eth0 up
-udhcpc 
-#-t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
+#ifconfig eth0 up
+udhcpc -t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
 
 #check for LUKS-devices
 decrypt_shell
@@ -132,6 +131,7 @@ decrypt_shell
 initlvm
 mount -o rw /dev/MyVolGroup/root /mnt/root 2>&1 >/dev/null
 if [ -h /mnt/root/sbin/init -o -e /mnt/root/sbin/init ]; then
+  ifconfig eth0 down
   boot
 else
   rescue_shell
