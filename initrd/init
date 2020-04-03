@@ -122,8 +122,9 @@ mdadm --manage /dev/md0 --add /dev/sdb
 # setting up network
 #/sbin/getmac
 ifconfig eth0 hw ether c2:0d:88:00:80:08
-#ifconfig eth0 up
-udhcpc -t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
+ifconfig eth0 up
+udhcpc 
+#-t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
 
 #check for LUKS-devices
 decrypt_shell
