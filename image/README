@@ -2,16 +2,16 @@
 apt update
 apt upgrade
 apt install build-essential u-boot-tools libncurses5-dev git bison flex bc libssl-dev
-# Примечание: Если сборка ведется на обычном компе - устанавливаем Cross-compiler, если на девайсе - пропускаем слудующую команду.
+# NOTE: If compiled on the WD device, the Cross-compiler can be skipped. If on different device the following command needs to be run
 apt install crossbuild-essential-armhf
 
-# Скачиваем исходники последней стабильной ветки ядра Linux:
-git clone --depth 1 git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-stable
+# Get sources of Linux Kernel version 5.5.3 to compile:
+git clone --depth 1 --branch v5.5.3 git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-stable
 
-# Скачиваем конфиг ядра
+# Copy prepared config file to linux directory
 cp kernel.config linux-stable/.config
 
-# WD MyCloud Ex2 Ultra
+# Copy prepared Device Tree for WD MyCloud Ex2 Ultra
 cp armada-385-wdmc-Ex2-Ultra.dts linux-stable/arch/arm/boot/dts/
 
 # Пора начинать...
@@ -25,11 +25,8 @@ export DTS_FILE=armada-385-wdmc-Ex2-Ultra
 mkdir -p $DIR_RESULT
 cd linux-stable
 
-# Обновляем конфиг (Если появились новые параметры - будет предложено ввести их значения)
-make -j 4 oldconfig
-
-# Если нужно, можно внести изменения в конфиг ядра через псевдографическое меню:
-make -j 4 menuconfig
+#make -j 4 oldconfig
+#make -j 4 menuconfig
 
 # Собственно, собираем все:
 make -j 4 zImage
