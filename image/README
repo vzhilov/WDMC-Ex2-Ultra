@@ -54,7 +54,7 @@ cp GrandTeton-20170708.patch u-boot/u-boot-2013.01-2014_T3.0p2
 cd u-boot/u-boot-2013.01-2014_T3.0p2
 patch -p1 < GrandTeton-20170708.patch
 sudo ./xbuid.sh build
-Or use my patched u-boot for my EX2 Ultra at the attachment.
+Or use dtd (https://forum.doozan.com/profile.php?2,4429) patched u-boot for my EX2 Ultra at the attachment.
 
 For full details see the post of CyberPK at
 https://forum.doozan.com/read.php?2,28939,98649#msg-98649. All credits goes to him.
