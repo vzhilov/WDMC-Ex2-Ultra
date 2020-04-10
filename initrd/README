@@ -1,0 +1,9 @@
+Compile last version of cryptsetup
+
+ sudo apt install uuid-dev libblkid-dev libjson-c-dev pkg-config m4
+ git clone https://gitlab.com/cryptsetup/cryptsetup
+ cd cryptsetup
+ ./autogen.sh
+  ./configure --host=arm-linux-gnueabihf --build=arm-linux --enable-static --prefix=/home/user//output/usr
+  #comment out uuid_clear in case of an error
+  
