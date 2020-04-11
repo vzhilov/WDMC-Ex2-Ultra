@@ -8,7 +8,7 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- install
 
 Compile last version of cryptsetup
 
- sudo apt install uuid-dev libblkid-dev libjson-c-dev pkg-config m4 autopoint autoconf automake
+ sudo apt install uuid-dev libblkid-dev libjson-c-dev pkg-config m4 autopoint autoconf automake libtool
  git clone https://gitlab.com/cryptsetup/cryptsetup
  cd cryptsetup
  ./autogen.sh
