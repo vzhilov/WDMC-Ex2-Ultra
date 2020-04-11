@@ -8,10 +8,9 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- install
 
 Compile last version of cryptsetup
 (do not compile on x64 machines, I mamanged to compile it on the device only)
- sudo apt install uuid-dev libblkid-dev libjson-c-dev pkg-config m4 autopoint autoconf automake libtool libdevmapper-dev libpopt-dev
- git clone https://gitlab.com/cryptsetup/cryptsetup
- cd cryptsetup
- ./autogen.sh
-  ./configure --host=arm-linux-gnueabihf --build=arm-linux --enable-static --disable-nls --prefix=/home/user//output/usr
-  #comment out uuid_clear in case of an error
+sudo apt install uuid-dev libblkid-dev libjson-c-dev pkg-config m4 autopoint autoconf automake libtool libdevmapper-dev libpopt-dev
+git clone https://gitlab.com/cryptsetup/cryptsetup
+cd cryptsetup
+./autogen.sh
+./configure --host=arm-linux-gnueabihf --build=arm-linux --enable-static --disable-nls --prefix=/home/user//output/
   
