@@ -8,7 +8,7 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- install
 
 
 Build Glibc
-apt install gawk python-dev
+apt install gawk python3
 git clone git://sourceware.org/git/glibc.git
 ./configure
 
