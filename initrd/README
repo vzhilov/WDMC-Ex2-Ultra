@@ -1,3 +1,11 @@
+Build Busybox
+curl https://busybox.net/downloads/busybox-1.31.1.tar.bz2 | tar xjf -
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- defconfig
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- menuconfig
+#The option to compile Busybox as a static executable, so that we don’t have to copy the dynamic libraries inside the root filesystem. The setting can be found in “Busybox Settings --> Build Options“. Also, select what utilities you want embedded in Busybox.
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- install
+#the result will be in _INSTALL folder
+
 Compile last version of cryptsetup
 
  sudo apt install uuid-dev libblkid-dev libjson-c-dev pkg-config m4
