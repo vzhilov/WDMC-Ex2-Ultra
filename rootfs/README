@@ -11,6 +11,8 @@ sudo debootstrap --arch armhf stable rootfs/ http://deb.debian.org/debian
 sudo multistrap -a armhf -d rootfs -f rootfs.conf
 cd rootfs/
 tar -cvf rootfs.tar.gz *
+# Move files to the device
+
 
 
 
