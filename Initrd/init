@@ -6,14 +6,6 @@
 #-----------functions--------------
 # Start decryption filesystem
 decrypt_shell() {
-  # Check which device encrypted
-  #export cryptdev=$(blkid -l -o device -t TYPE=crypto_LUKS)
-  #echo device=$(blkid -l -o device -t TYPE=crypto_LUKS) >>/etc/profile      # add location of crytodevice to environment
-  #echo export device >>/etc/profile
-  # Look for key on usb / hdd
-  #mount -o rw $(findfs LABEL=key) /mnt/key
-  #wait
-  # fttpServerIp=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}')
   tftp -r license.key -l /mnt/key/license.key -g tftp.local
   wait
   if [  -e /mnt/key/license.key  ]; then
@@ -38,8 +30,6 @@ fi
 
 # rescue_shell
 rescue_shell() {
-  # start ssh
-  dropbear -B -p 2222 -b /etc/dropbear/banner.rescue -P /run/dropbear.pid 2>&1 >/dev/null
   echo -e "\n Something went wrong. Dropping to a shell.\n"
  
   ## Wait for manual decryption
@@ -114,10 +104,6 @@ mdadm --assemble --scan
 # If case a disk was replaced (TODO: make an IF here)
 mdadm --manage /dev/md0 --add /dev/sdb
 
-# Mount the config files
-#ubiattach /dev/ubi_ctrl -m 5
-#wait
-#mount -t ubifs ubi0:config /mnt/config - todo, we can't mount ubifs device as a module is missing
 
 # setting up network
 #/sbin/getmac
