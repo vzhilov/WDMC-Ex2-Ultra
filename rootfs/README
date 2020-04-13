@@ -8,7 +8,7 @@ sudo debootstrap --arch armhf stable rootfs/ http://deb.debian.org/debian
 #The result will be in rootfs foolder. 
 
 # Alternative
-multistrap -a arm-linux-gnueabihf -d rootfs -f rootfs.conf
+multistrap -a armhf -d rootfs -f rootfs.conf
 
 
 
