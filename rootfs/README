@@ -1,4 +1,5 @@
-# After we flashed uBoot, uImage and uInitrd to the device memery, we can not partition HDD drives and copy the rootfs to the root partition
+# After we flashed uBoot, uImage and uInitrd to the device memery, 
+# we can not partition HDD drives and copy the rootfs to the root partition
 # We do rootfs with last stable version of Debian by:
 sudo debootstrap --arch armhf stable rootfs/ http://deb.debian.org/debian
 
