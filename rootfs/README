@@ -2,11 +2,23 @@
 # we can not partition HDD drives and copy the rootfs to the root partition
 # We do rootfs with last stable version of Debian by:
 sudo multistrap -a armhf -d rootfs -f rootfs.conf
+chroot rootfs
+# Generate login mechanism
+pam-auth-update
+# Create root user with password "mycloud"
+echo "root:mycloud" | chpasswd
 cd rootfs/
 tar -cvf rootfs.tar.gz *
 
-# Move files to the device
-
+# Move files to the device on an USB drive and then copy them to the device
+nount /dev/sdb1 /mnt/root
+cp /dev/sdb1/rootfs.tag.gz /mnt/root/
+cd /mnt/root/
+tar -xvf rootfs.tar.gz
+rm rootfs.tar.gs
+cd ..
+umount /dev/root
+sync
 
 
 
