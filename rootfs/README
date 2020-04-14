@@ -1,10 +1,32 @@
-# After we flashed uBoot, uImage and uInitrd to the device memery, 
+# After we flashed uBoot, uImage and uInitrd to the device memory, 
 # we can not partition HDD drives and copy the rootfs to the root partition
 # We do rootfs with last stable version of Debian by:
-sudo apt install debootstrap
-mkdir rootfs
-sudo debootstrap --arch armhf stable rootfs/ http://deb.debian.org/debian
+sudo multistrap -a armhf -d rootfs -f rootfs.conf
+chroot --userspec=root:root rootfs
+# Generate login mechanism
+pam-auth-update
+adduser root
+# Create root user with password "mycloud"
+echo "root:mycloud" | chpasswd
+shadowconfig on
+chown root:root -R *
+export PATH="$PATH:/sbin"
+source ~/.profile
+exit
+cd rootfs/
+tar -cvf rootfs.tar.gz *
 
-#The result will be in rootfs foolder. 
+# Move files to the device on an USB drive and then copy them to the device
+nount /dev/sdb1 /mnt/root
+cp /dev/sdb1/rootfs.tag.gz /mnt/root/
+cd /mnt/root/
+tar -xvf rootfs.tar.gz
+rm rootfs.tar.gs
+cd ..
+umount /dev/root
+sync
+
+
+
 
 # In order to make this rootfs able to boot we need to setup hostname, network (DHCP) and fstab.
