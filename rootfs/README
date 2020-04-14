@@ -2,9 +2,10 @@
 # we can not partition HDD drives and copy the rootfs to the root partition
 # We do rootfs with last stable version of Debian by:
 sudo multistrap -a armhf -d rootfs -f rootfs.conf
-chroot rootfs
+chroot --userspec=root:root rootfs
 # Generate login mechanism
 pam-auth-update
+adduser root
 # Create root user with password "mycloud"
 echo "root:mycloud" | chpasswd
 chown root:root -R *
