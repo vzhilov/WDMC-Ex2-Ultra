@@ -8,6 +8,7 @@ pam-auth-update
 adduser root
 # Create root user with password "mycloud"
 echo "root:mycloud" | chpasswd
+shadowconfig on
 chown root:root -R *
 export PATH="$PATH:/sbin"
 source ~/.profile
