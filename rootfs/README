@@ -7,6 +7,8 @@ chroot rootfs
 pam-auth-update
 # Create root user with password "mycloud"
 echo "root:mycloud" | chpasswd
+chown root:root -R *
+exit
 cd rootfs/
 tar -cvf rootfs.tar.gz *
 
