@@ -1,7 +1,6 @@
 #!/bin/busybox ash
 # init-script for WD Mycloud Mirror gen2 & Ex2 ultra
 # Boots from partition labeled "rootfs"
-# (c) Carl Schiller; schreibcarl@gmail.com
 
 #-----------functions--------------
 # Start decryption filesystem
@@ -111,11 +110,30 @@ ifconfig eth0 hw ether c2:0d:88:00:80:08
 #ifconfig eth0 up
 udhcpc -t 5 -q -s /bin/simple.script -p /run/udhcpc.pid
 
-#check for LUKS-devices
-decrypt_shell
+# We mount encrypted rootfs by default
+chooseBoot=1
 
-initlvm
-mount -o rw /dev/MyVolGroup/root /mnt/root 2>&1 >/dev/null
+#check for LUKS-devices
+read -t 15 -p "
+Avalaible boot options:
+1. From encrypted rootfs
+2. From custom device
+(You have 15 seconds for input)
+Press 1 or type your path, i.e. /dev/sdc1: " chooseBoot
+
+if [ $chooseBoot == 1 ]; then 
+    decrypt_shell
+    mountPoint="/dev/MyVolGroup/root"
+    initlvm
+else
+    mountPoint=$chooseBoot
+fi
+
+echo "
+Booting from $mountPoint
+"
+
+mount -o rw $mountPoint /mnt/root 2>&1 >/dev/null
 if [ -h /mnt/root/sbin/init -o -e /mnt/root/sbin/init ]; then
   ifconfig eth0 down
   boot
