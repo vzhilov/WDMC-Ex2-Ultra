@@ -30,8 +30,8 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- armada-385-wdmc-Ex2-Ultra.dtb
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- modules
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=../output modules_install
 cp arch/arm/boot/zImage zImage_and_dtb
-cat arch/arm/boot/dts/$DTS_FILE.dtb >> zImage_and_dtb
-mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n $DTS_FILE -d zImage_and_dtb $DIR_RESULT/uImage
+cat arch/arm/boot/dts/armada-385-wdmc-Ex2-Ultra.dtb >> zImage_and_dtb
+mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n Kernel-v5.5.3 -d zImage_and_dtb uImage
 rm zImage_and_dtb
 
 # The new Kernel v5.5.3 will not load at standard memory addresses. We need to flash new custom u-boot in uBoot folder
