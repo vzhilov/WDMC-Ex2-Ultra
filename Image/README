@@ -21,8 +21,8 @@ cp armada-385-wdmc-Ex2-Ultra.dts linux-stable/arch/arm/boot/dts/
 mkdir -p output
 cd linux-stable
 
-#make oldconfig
-#make menuconfig
+#make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- oldconfig
+#make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- menuconfig
 
 # Собственно, собираем все:
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage
