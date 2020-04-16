@@ -62,7 +62,7 @@ mdadm --create /dev/md0 --level=1 --raid-devices=2 --run /dev/sda missing
 mdadm --manage /dev/md0 --add /dev/sdb
 
 # Encrypt your new partition and open it
-cryptsetup -v --type luks --cipher aes-xts-plain64 --key-size 512 --hash sha512 --iter-time 2000 --use-random --verify-passphrase luksFormat /dev/md0
+sudo cryptsetup -v -y -c aes-cbc-essiv:sha256 luksFormat /dev/sda1 --iter-time 2000 --use-random --verify-passphrase luksFormat /dev/md0
 cryptsetup open /dev/md0 cryptlvm
 nohup dd if=/dev/urandom of=/dev/mapper/cryplvm &
 #That's going to be few days.
