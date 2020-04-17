@@ -38,6 +38,7 @@ fi
 
 # rescue_shell
 rescue_shell() {
+  dropbear -B -p 2222 -b /etc/dropbear/banner.crypto -P /run/dropbear.pid 2>&1 >/dev/null
   echo -e "\n Something went wrong. Dropping to a shell.\n"
  
   ## Wait for manual decryption
@@ -80,7 +81,7 @@ boot() {
 
 #-----------init script--------------
 # Creat folders and install Busybox
-mkdir -p /dev /mnt/root /mnt/key /proc /root /sys /run /var/run
+mkdir -p /dev /mnt/root /mnt/key /proc /root /sys /run /var/run /home /home/root
 #/bin/busybox --install -s
 
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
