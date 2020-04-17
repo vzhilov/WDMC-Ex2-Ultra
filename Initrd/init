@@ -1,12 +1,21 @@
 #!/bin/busybox ash
 # init-script for WD Mycloud Mirror gen2 & Ex2 ultra
-# Boots from partition labeled "rootfs"
 
 #-----------functions--------------
 # Start decryption filesystem
 decrypt_shell() {
-  tftp -r license.key -l /mnt/key/license.key -g tftp.local
-  wait
+  isUsb=$(blkid -l -o device -t TYPE="vfat")
+  if ! [ $isUsb=="" ];  then
+    echo "USB device $isUsb found, checking for a key..."
+    mount $isUsb /mnt/key
+    wait
+  fi
+  if ! [  -e /mnt/key/license.key  ]; then
+    umount /mnt/key || :
+    wait
+    tftp -r license.key -l /mnt/key/license.key -g tftp.local
+    wait
+  fi
   if [  -e /mnt/key/license.key  ]; then
     cryptsetup luksOpen /dev/md0 cryptroot --key-file /mnt/key/license.key
     dd if=/dev/urandom of=/mnt/key/license.key bs=1024 count=$RANDOM
@@ -14,7 +23,7 @@ decrypt_shell() {
     rm /mnt/key/license.key
     check_unlock
   else
-    dropbear -B -p 2222 -b /etc/dropbear/banner.crypto -P /run/dropbear.pid 2>&1 >/dev/null
+    rescue_shell
   fi
 }
 
@@ -69,16 +78,10 @@ boot() {
   exec switch_root -c /dev/console /mnt/root /sbin/init
 }
 
-#Reset button
-resetbutton_init() {
-echo 50 > /sys/class/gpio/export
-echo 1 > /sys/class/gpio/gpio50/active_low
-}
-
 #-----------init script--------------
 # Creat folders and install Busybox
-/bin/busybox mkdir -p /dev /mnt/root /mnt/key /mnt/config /mnt/config/initrd /proc /root /usr/sbin /usr/bin /sbin /bin /sys /run /var/run
-/bin/busybox --install -s
+mkdir -p /dev /mnt/root /mnt/key /proc /root /sys /run /var/run
+#/bin/busybox --install -s
 
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
@@ -90,9 +93,6 @@ mount -t devtmpfs none /dev
 # Adding mdev support
 echo /sbin/mdev >/proc/sys/kernel/hotplug
 mdev -s
-
-# Adding reset button beheavor
-resetbutton_init
 
 # Initial Raid
 echo 'DEVICE /dev/sd?*' >/etc/mdadm.conf
@@ -119,18 +119,18 @@ Avalaible boot options:
 1. From encrypted rootfs
 2. From custom device
 (You have 15 seconds for input)
-Press 1 or type your path, i.e. /dev/sdc1: " chooseBoot
+Choose boot option (1/2): " chooseBoot
 
 if [ $chooseBoot == 1 ]; then 
     decrypt_shell
     mountPoint="/dev/MyVolGroup/root"
     initlvm
 else
-    mountPoint=$chooseBoot
+    read -p "Enter your device path (i.e. /dev/sdc1): " mountPoint
 fi
 
 echo "
-Booting from $mountPoint
+Trying to boot from $mountPoint...
 "
 
 mount -o rw $mountPoint /mnt/root 2>&1 >/dev/null
