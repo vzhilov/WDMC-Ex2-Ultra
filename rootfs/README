@@ -1,17 +1,31 @@
 # After we flashed uBoot, uImage and uInitrd to the device memory, 
 # we can not partition HDD drives and copy the rootfs to the root partition
 # We do rootfs with last stable version of Debian by:
+mkdir rootfs
 sudo multistrap -a armhf -d rootfs -f rootfs.conf
+# or
+# apt install qemu-user-static
+# debootstrap --arch=armhf --foreign --include=htop,net-tools buster rootfs/
+# cp /usr/bin/qemu-arm-static usr/bin/
+mount -t proc proc proc/
+mount -t sysfs sys sys/
+mount -o bind /dev dev/
+LC_ALL=C LANGUAGE=C LANG=c chroot rootfs/
 chroot --userspec=root:root rootfs
 # Generate login mechanism
+touch /etc/passwd
+adduser root -u 0
 pam-auth-update
-adduser root
 # Create root user with password "mycloud"
-echo "root:mycloud" | chpasswd
-shadowconfig on
-chown root:root -R *
-export PATH="$PATH:/sbin"
-source ~/.profile
+#echo "root:mycloud" | chpasswd
+#shadowconfig on
+#chown root:root -R *
+#export PATH="$PATH:/sbin"
+#source ~/.profile
+rm usr/bin/qemu-arm-static
+umount proc
+umount sys
+umount dev
 exit
 cd rootfs/
 tar -cvf rootfs.tar.gz *
