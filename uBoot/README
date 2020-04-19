@@ -11,11 +11,11 @@ cp GrandTeton-20170708.patch u-boot/u-boot-2013.01-2014_T3.0p2
 cd u-boot/u-boot-2013.01-2014_T3.0p2
 patch -p1 < GrandTeton-20170708.patch
 sudo ./xbuid.sh build
-Or use dtd (https://forum.doozan.com/profile.php?2,4429) patched u-boot for my EX2 Ultra at the attachment.
 
 For full details see the post of CyberPK at
 https://forum.doozan.com/read.php?2,28939,98649#msg-98649. All credits goes to him.
 
+# The compiled file is in this folder. In order to flash this to NAND copy it to USB drive, insert to NAS and do:
 usb start
 bubt u-boot.bin nand usb
 reset
