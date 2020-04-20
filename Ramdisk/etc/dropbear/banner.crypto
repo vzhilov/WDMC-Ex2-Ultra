@@ -1,0 +1,12 @@
+================Decrypt SHELL=============
+user        root
+==========================================
+  For boot please decrypt your encrypted 
+         rootfs on $device with:
+
+cryptsetup -T 5 luksOpen $device cryptroot
+==========================================
+ recommended to change your root password 
+==========================================
+
+
