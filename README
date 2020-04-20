@@ -1,5 +1,12 @@
-## Initrd for WD MyCloud Ex2 Ultra
-This custom uInitrd and uImage for isntalling Debian Stretch and use full disk encryption on WD MyCloud Ex2 Ultra NAS
+Up-to-date firmware for WD My Cloud Ex2 Ultra
+
+The sequence is:
+1) Update u-boot. It is needed to adjust load addresess for new Kernel and Ramdisk. See UBoot folder for details.
+2) Update kernel with compiled uImage file. See Kernel folder for details.
+3) Update ramdisk with compiled uInitrd file. See Ramdisk folder for detials.
+4) Set rootfs - the actuall Debian system. See Rootfs folder for detials.
+
+This custom firmware supports full disk encryption on WD MyCloud Ex2 Ultra NAS
 
 ## Support
 + USB or SATA drive 
