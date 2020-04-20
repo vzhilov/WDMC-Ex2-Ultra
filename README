@@ -63,7 +63,7 @@ mdadm --manage /dev/md0 --add /dev/sdb
 
 # Encrypt your new partition and open it
 sudo cryptsetup -v -y -c aes-cbc-essiv:sha256 --iter-time 2000 --use-random luksFormat /dev/md0
-cryptsetup open /dev/md0 cryptlvm
+cryptsetup luksOpen /dev/md0 cryptlvm
 nohup dd if=/dev/urandom of=/dev/mapper/cryplvm &
 #That's going to be few days.
 #Check progress with 'ps ax | grep dd' to find out $pid and then kill -USR1 $pid.
