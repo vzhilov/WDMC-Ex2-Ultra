@@ -7,13 +7,15 @@ sudo multistrap -a armhf -d rootfs -f rootfs.conf
 # apt install qemu-user-static
 # debootstrap --arch=armhf --foreign --include=htop,net-tools buster rootfs/
 # cp /usr/bin/qemu-arm-static usr/bin/
+cd rootfs/
 mount -t proc proc proc/
 mount -t sysfs sys sys/
 mount -o bind /dev dev/
-LC_ALL=C LANGUAGE=C LANG=c chroot rootfs/
-chroot --userspec=root:root rootfs
+cd ..
+LC_ALL=C LANGUAGE=C LANG=C chroot rootfs/
+#chroot --userspec=root:root rootfs
 # Generate login mechanism
-touch /etc/passwd
+#touch /etc/passwd
 adduser root -u 0
 pam-auth-update
 # Create root user with password "mycloud"
