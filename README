@@ -72,7 +72,7 @@ nohup dd if=/dev/urandom of=/dev/mapper/cryplvm &
 # Create LVM logical volumes on encrypted partition
 lvm pvcreate /dev/mapper/cryptlvm
 lvm vgcreate MyVolGroup /dev/mapper/cryptlvm
-lvm lvcreate -L 512MB MyVolGroup -n swap -Zn
+lvm lvcreate -L 1024MB MyVolGroup -n swap -Zn
 lvm lvcreate -L 4096MB MyVolGroup -n root -Zn
 lvm lvcreate -l +100%FREE MyVolGroup -n data -Zn
 
