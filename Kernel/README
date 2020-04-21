@@ -2,6 +2,8 @@
 apt update
 apt upgrade
 apt install build-essential u-boot-tools libncurses5-dev git bison flex bc libssl-dev
+# Use patch to fix LED beheavor
+patch -p1 < gpio_trigger.patch
 # NOTE: If compiled on the WD device, the Cross-compiler can be skipped. If on different device the following command needs to be run
 apt install crossbuild-essential-armhf
 
