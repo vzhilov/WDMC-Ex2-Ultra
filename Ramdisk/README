@@ -9,13 +9,13 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- install
 # We only need binaries and libs for cryptsetup, mdadm and mke2fs(@mkfs.ext4) as Busybox does not have those applets. The needed libs are in the /lib diretory.
 # If you don't trust those, build them from sources or get them from rootfs folder.
 
-Build Glibc
+# Build Glibc (or take it from .deb package libc.so.6)
 apt install gawk python3
 git clone git://sourceware.org/git/glibc.git
 ./configure --host=arm-linux-gnueabihf --prefix=$result_dir
 
-Compile last version of cryptsetup
-(it is hard to compile on x64 machines, I mamanged to compile it on the device only)
+# Compile last version of cryptsetup
+# (it is hard to compile on x64 machines, I mamanged to compile it on the device only)
 sudo apt install uuid-dev libblkid-dev libjson-c-dev pkg-config m4 autopoint autoconf automake libtool libdevmapper-dev libpopt-dev
 git clone https://gitlab.com/cryptsetup/cryptsetup
 cd cryptsetup
