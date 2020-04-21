@@ -81,7 +81,7 @@ boot() {
 
 #-----------init script--------------
 # Creat folders and install Busybox
-mkdir -p /dev /mnt/root /mnt/key /proc /root /sys /run /var/run /home /home/root
+mkdir -p /dev /mnt/root /mnt/key /proc /root /sys /run /run/cryptsetup /var/run /home /home/root
 #/bin/busybox --install -s
 
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
