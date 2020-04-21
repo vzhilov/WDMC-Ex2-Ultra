@@ -1,0 +1,30 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+
+# Available triggers:
+# none bluetooth-power usb-gadget usb-host timer oneshot disk-activity ide-disk mtd nand-disk heartbeat gpio cpu cpu0 cpu1 default-on panic
+
+if [ -e /usr/sbin/mcu_ctl ]; then
+    /usr/sbin/mcu_ctl sys_ready 2>&1 >/dev/null
+    /usr/sbin/mcu_ctl fan_set_50 2>&1 >/dev/null
+fi
+if [ -e /sys/class/leds/wdmcex2u\:blue\:hdd1/trigger ]; then
+    echo gpio > /sys/class/leds/wdmcex2u\:blue\:hdd1/trigger
+    echo 48 >  /sys/class/leds/wdmcex2u\:blue\:hdd1/gpio
+fi
+if [ -e /sys/class/leds/wdmcex2u\:blue\:hdd2/trigger ]; then
+    echo gpio > /sys/class/leds/wdmcex2u\:blue\:hdd2/trigger
+    echo 58 > /sys/class/leds/wdmcex2u\:blue\:hdd2/gpio
+fi
+if [ -e /sys/class/leds/wdmcex2u\:red\:hdd1/trigger ]; then
+    echo disk-activity > /sys/class/leds/wdmcex2u\:red\:hdd1/trigger
+fi
+if [ -e /sys/class/leds/wdmcex2u\:red\:hdd2/trigger ]; then
+    echo panic > /sys/class/leds/wdmcex2u\:red\:hdd2/trigger
+fi
+exit 0
