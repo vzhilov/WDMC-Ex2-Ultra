@@ -11,6 +11,8 @@ apt install build-essential
 cc mcu_test.c -o mcu_ctl
 cp mcu_ctl usr/sbin/
 
+#Then put rc.local to etc/
+
 # Use termperatues.sh to monitor temperatures if interested
 
 tar -cvf rootfs.tar.gz *
