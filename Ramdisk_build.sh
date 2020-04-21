@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "# Creating cpio + lzma archive..."
-cd Ramdisk
+cd 3.Ramdisk
 find . | cpio -o -H newc | lzma -7 > ../initramfs.cpio.lzma
 cd ..
 
