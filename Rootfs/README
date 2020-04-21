@@ -5,6 +5,14 @@ mkdir rootfs
 sudo multistrap -a armhf -d rootfs -f rootfs.conf
 # Make archive and put it on USB drive
 cd rootfs/
+
+# Compile MCU controller to manage monitor the temperature and manage the fan
+apt install build-essential
+cc mcu_test.c -o mcu_ctl
+cp mcu_ctl usr/sbin/
+
+# Use termperatues.sh to monitor temperatures if interested
+
 tar -cvf rootfs.tar.gz *
 
 # On NAS
